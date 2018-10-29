@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Monty Hall Problem</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+      html, body, #app, section.section {
+  height: 100%;
+}
+
+      section.section {
+        display: flex;
+        flex-flow: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .column a{
+        width: 300px;
+        height: 300px;
+      }
+
+      h2{
+        font-size: 2em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+  <section class="section has-text-white has-background-info has-text-centered">
+    <div class="container">
+      <h1 class="title has-text-white">
+        Monty Hall Problem
+      </h1>
+      <p class="subtitle has-text-white" v-html="message">
+      </p>
+      <h2>{{pickDoor}}</h2>
+      <br>
+          <div class="columns ">
+            <div class="column">
+                <a class="button is-size-4" @click="clickOnDoor(1)" v-bind:class="{'is-success': doors.door1.success, 'is-danger' : doors.door1.danger,  'is-warning'  : doors.door1.warning} ">Door 1</a>
+            </div>
+            <div class="column">
+                <a class="button is-size-4" @click="clickOnDoor(2)" v-bind:class="{'is-success': doors.door2.success, 'is-danger' : doors.door2.danger, 'is-warning' : doors.door2.warning }">Door 2</a>
+            </div>
+            <div class="column">
+                <a class="button  is-size-4" @click="clickOnDoor(3)" v-bind:class="{'is-success': doors.door3.success, 'is-danger' : doors.door3.danger, 'is-warning' : doors.door3.warning }">Door 3</a>
+            </div>
+          </div>  
+    </div>
+  </section>
+</div>
+  <script>
+     var app = new Vue({
+        el: '#app',
+        data: {
+          message: '<br>Hey hello :) let&apos;s suppose you&apos;re on a game show, and you&apos;re given the choice of three doors: Behind one door is a car, behind the others, goats.<br> NB: The Game Master know where is the car.',
+          step: 0,
+          pickDoor: 'Pick a Door',
+          temp: 0,
+          doors: {
+            door1: {
+              warning : false ,
+              danger : false,
+              success : false,
+              },
+            door2:{
+              warning : false ,
+              danger : false,
+              success : false,
+              },
+            door3:{
+              warning : false ,
+              danger : false,
+              success : false,
+              }
+          },
+          styleButton: {
+             normal: 'is-primary is-inverted is-outlined',
+             picked: '' 
+          },
+          goodDoor: ''
+        },
+        created: function(){
+          this.goodDoor = this.randBetween(1,3)
+        },
+        methods: {
+          clickOnDoor: function(id) {
+          
+          if(this.step == 0)
+            {
+              if(id == 1){
+                this.doors.door1.warning = true
+                while(this.temp == 0 || this.temp == this.goodDoor )
+                {
+                  this.temp = this.randBetween(2,3)
+                }  
+              }else if(id == 2){
+                this.doors.door2.warning = true
+                while(this.temp == 0 || this.temp == 2 || this.temp == this.goodDoor )
+                {
+                  this.temp = this.randBetween(1,3)
+                }
+                
+              }else{
+
+                this.doors.door3.warning = true
+                while(this.temp == 0 || this.temp == this.goodDoor )
+                  {
+                    this.temp = this.randBetween(1,2)
+                  }
+              }
+            
+              this.pickDoor = 'Keep your choice or pick the other door'
+              this.message= '<br>You picked the door <b>' + id +'</b> <br><br>The Game Master open the door '+  this.temp  +'. Behind this red door are goats. <br><br> Now the Game Master give you the possibility to switch your choice. What do you you do?'
+              this.wrongDoor(this.temp)
+              this.step++
+            }else{
+              if(this.goodDoor == id){
+                this.pickDoor = 'You win the car V(^-^)V'
+                this.doors.door1.success = true;
+                this.doors.door2.success = true;
+                this.doors.door3.success = true;
+                this.doors.door1.danger = false;
+                this.doors.door2.danger = false;
+                this.doors.door3.danger = false;
+                this.doors.door1.warning = false;
+                this.doors.door2.warning = false;
+                this.doors.door3.warning= false;
+              }else{
+                this.pickDoor = 'You lose and cry with the goats ㅠ_ㅠ'
+                this.doors.door1.danger = true;
+                this.doors.door2.danger = true;
+                this.doors.door3.danger = true;
+              }
+              this.message = ''
+              
+            }
+
+          },
+          randBetween: function(min, max){
+            return Math.floor(Math.random() * (max-min+1) + min)
+          },
+          wrongDoor: function(temp){
+            if(temp == 1) { this.doors.door1.danger = true }
+            else if (temp == 2) { this.doors.door2.danger = true }
+            else { this.doors.door3.danger = true }
+          }
+          
+        }
+      });
+    </script>
+    
+    
+  </body>
+  
+</html>
